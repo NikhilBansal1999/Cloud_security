@@ -1,0 +1,71 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+Elf64_Half	/home/nikhil/Cloud_security2/load_lib.c	/^typedef uint16_t Elf64_Half;$/;"	typedef	line:7	file:
+Elf64_Word	/home/nikhil/Cloud_security2/load_lib.c	/^typedef uint32_t Elf64_Word;$/;"	typedef	line:8	file:
+Elf64_Sword	/home/nikhil/Cloud_security2/load_lib.c	/^typedef	int32_t  Elf64_Sword;$/;"	typedef	line:9	file:
+Elf64_Xword	/home/nikhil/Cloud_security2/load_lib.c	/^typedef uint64_t Elf64_Xword;$/;"	typedef	line:10	file:
+Elf64_Sxword	/home/nikhil/Cloud_security2/load_lib.c	/^typedef	int64_t  Elf64_Sxword;$/;"	typedef	line:11	file:
+Elf64_Addr	/home/nikhil/Cloud_security2/load_lib.c	/^typedef uint64_t Elf64_Addr;$/;"	typedef	line:12	file:
+Elf64_Off	/home/nikhil/Cloud_security2/load_lib.c	/^typedef uint64_t Elf64_Off;$/;"	typedef	line:13	file:
+EI_NIDENT	/home/nikhil/Cloud_security2/load_lib.c	/^#define EI_NIDENT /;"	macro	line:15	file:
+file_d	/home/nikhil/Cloud_security2/load_lib.c	/^  FILE* file_d;          \/*File descriptor of open library*\/$/;"	member	line:19	struct:__anon1	file:
+entry	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Addr entry;      \/*Entry point indicated by ELF header*\/$/;"	member	line:20	struct:__anon1	file:
+phnum	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Half phnum;      \/*Number of program headers*\/$/;"	member	line:21	struct:__anon1	file:
+dyn_vaddr	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Addr dyn_vaddr;  \/*p_vaddr value of dynamic program header*\/$/;"	member	line:22	struct:__anon1	file:
+dyn_num_ents	/home/nikhil/Cloud_security2/load_lib.c	/^  int dyn_num_ents;      \/*Number of Dynamic table entries*\/$/;"	member	line:23	struct:__anon1	file:
+dyn_num	/home/nikhil/Cloud_security2/load_lib.c	/^  int dyn_num;           \/*Program header number of dynamic program header*\/$/;"	member	line:24	struct:__anon1	file:
+pht_vaddr	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Addr pht_vaddr;  \/*Virtual address of the program header table*\/$/;"	member	line:25	struct:__anon1	file:
+link_info	/home/nikhil/Cloud_security2/load_lib.c	/^} link_info;$/;"	typedef	line:26	typeref:struct:__anon1	file:
+e_ident	/home/nikhil/Cloud_security2/load_lib.c	/^  unsigned char	e_ident[EI_NIDENT];	\/* Magic number and other info *\/$/;"	member	line:30	struct:__anon2	file:
+e_type	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Half	e_type;			\/* Object file type *\/$/;"	member	line:31	struct:__anon2	file:
+e_machine	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Half	e_machine;		\/* Architecture *\/$/;"	member	line:32	struct:__anon2	file:
+e_version	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Word	e_version;		\/* Object file version *\/$/;"	member	line:33	struct:__anon2	file:
+e_entry	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Addr	e_entry;		\/* Entry point virtual address *\/$/;"	member	line:34	struct:__anon2	file:
+e_phoff	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Off	e_phoff;		\/* Program header table file offset *\/$/;"	member	line:35	struct:__anon2	file:
+e_shoff	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Off	e_shoff;		\/* Section header table file offset *\/$/;"	member	line:36	struct:__anon2	file:
+e_flags	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Word	e_flags;		\/* Processor-specific flags *\/$/;"	member	line:37	struct:__anon2	file:
+e_ehsize	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Half	e_ehsize;		\/* ELF header size in bytes *\/$/;"	member	line:38	struct:__anon2	file:
+e_phentsize	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Half	e_phentsize;		\/* Program header table entry size *\/$/;"	member	line:39	struct:__anon2	file:
+e_phnum	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Half	e_phnum;		\/* Program header table entry count *\/$/;"	member	line:40	struct:__anon2	file:
+e_shentsize	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Half	e_shentsize;		\/* Section header table entry size *\/$/;"	member	line:41	struct:__anon2	file:
+e_shnum	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Half	e_shnum;		\/* Section header table entry count *\/$/;"	member	line:42	struct:__anon2	file:
+e_shstrndx	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Half	e_shstrndx;		\/* Section header string table index *\/$/;"	member	line:43	struct:__anon2	file:
+Elf_header	/home/nikhil/Cloud_security2/load_lib.c	/^} Elf_header;$/;"	typedef	line:44	typeref:struct:__anon2	file:
+sh_name	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Word	sh_name;		\/* Section name (string tbl index) *\/$/;"	member	line:48	struct:__anon3	file:
+sh_type	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Word	sh_type;		\/* Section type *\/$/;"	member	line:49	struct:__anon3	file:
+sh_flags	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Xword	sh_flags;		\/* Section flags *\/$/;"	member	line:50	struct:__anon3	file:
+sh_addr	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Addr	sh_addr;		\/* Section virtual addr at execution *\/$/;"	member	line:51	struct:__anon3	file:
+sh_offset	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Off	sh_offset;		\/* Section file offset *\/$/;"	member	line:52	struct:__anon3	file:
+sh_size	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Xword	sh_size;		\/* Section size in bytes *\/$/;"	member	line:53	struct:__anon3	file:
+sh_link	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Word	sh_link;		\/* Link to another section *\/$/;"	member	line:54	struct:__anon3	file:
+sh_info	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Word	sh_info;		\/* Additional section information *\/$/;"	member	line:55	struct:__anon3	file:
+sh_addralign	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Xword	sh_addralign;		\/* Section alignment *\/$/;"	member	line:56	struct:__anon3	file:
+sh_entsize	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Xword	sh_entsize;		\/* Entry size if section holds table *\/$/;"	member	line:57	struct:__anon3	file:
+Elf_Section_header	/home/nikhil/Cloud_security2/load_lib.c	/^} Elf_Section_header;$/;"	typedef	line:58	typeref:struct:__anon3	file:
+st_name	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Word	st_name;		\/* Symbol name (string tbl index) *\/$/;"	member	line:62	struct:__anon4	file:
+st_info	/home/nikhil/Cloud_security2/load_lib.c	/^  unsigned char	st_info;		\/* Symbol type and binding *\/$/;"	member	line:63	struct:__anon4	file:
+st_other	/home/nikhil/Cloud_security2/load_lib.c	/^  unsigned char st_other;		\/* Symbol visibility *\/$/;"	member	line:64	struct:__anon4	file:
+st_shndx	/home/nikhil/Cloud_security2/load_lib.c	/^  int	st_shndx;		\/* Section index *\/$/;"	member	line:65	struct:__anon4	file:
+st_value	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Addr	st_value;		\/* Symbol value *\/$/;"	member	line:66	struct:__anon4	file:
+st_size	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Xword	st_size;		\/* Symbol size *\/$/;"	member	line:67	struct:__anon4	file:
+Elf_Symtab_ent	/home/nikhil/Cloud_security2/load_lib.c	/^} Elf_Symtab_ent;$/;"	typedef	line:68	typeref:struct:__anon4	file:
+p_type	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Word	p_type;			\/* Segment type *\/$/;"	member	line:72	struct:__anon5	file:
+p_flags	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Word	p_flags;		\/* Segment flags *\/$/;"	member	line:73	struct:__anon5	file:
+p_offset	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Off	p_offset;		\/* Segment file offset *\/$/;"	member	line:74	struct:__anon5	file:
+p_vaddr	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Addr	p_vaddr;		\/* Segment virtual address *\/$/;"	member	line:75	struct:__anon5	file:
+p_paddr	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Addr	p_paddr;		\/* Segment physical address *\/$/;"	member	line:76	struct:__anon5	file:
+p_filesz	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Xword	p_filesz;		\/* Segment size in file *\/$/;"	member	line:77	struct:__anon5	file:
+p_memsz	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Xword	p_memsz;		\/* Segment size in memory *\/$/;"	member	line:78	struct:__anon5	file:
+p_align	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Xword	p_align;		\/* Segment alignment *\/$/;"	member	line:79	struct:__anon5	file:
+Elf64_Program_header	/home/nikhil/Cloud_security2/load_lib.c	/^} Elf64_Program_header;$/;"	typedef	line:80	typeref:struct:__anon5	file:
+d_tag	/home/nikhil/Cloud_security2/load_lib.c	/^  Elf64_Sxword d_tag;$/;"	member	line:84	struct:__anon6	file:
+d_val	/home/nikhil/Cloud_security2/load_lib.c	/^    Elf64_Xword d_val;$/;"	member	line:87	union:__anon6::__anon7	file:
+d_ptr	/home/nikhil/Cloud_security2/load_lib.c	/^    Elf64_Addr d_ptr;$/;"	member	line:88	union:__anon6::__anon7	file:
+d_un	/home/nikhil/Cloud_security2/load_lib.c	/^  } d_un;$/;"	member	line:89	struct:__anon6	typeref:union:__anon6::__anon7	file:
+Elf64_Dyn	/home/nikhil/Cloud_security2/load_lib.c	/^} Elf64_Dyn;$/;"	typedef	line:90	typeref:struct:__anon6	file:
+map_library	/home/nikhil/Cloud_security2/load_lib.c	/^link_info* map_library(char* lib_name)$/;"	function	line:92	signature:(char* lib_name)
+main	/home/nikhil/Cloud_security2/load_lib.c	/^int main()$/;"	function	line:127
