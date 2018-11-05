@@ -304,15 +304,15 @@ link_info* map_library(char* lib_name)
     Elf64_Addr* reloc_addr=info->base_addr+relocations[i].r_offset;
     if(type==6)
     {
-      *(reloc_addr)=symbols[sym_index].st_value;
+      *(reloc_addr)=info->base_addr+symbols[sym_index].st_value;
       //printf("%p     %d      %p\n",symbols[sym_index].st_value,sym_index,relocations[i].r_offset);
     }
     if(type==8)
     {
       *(reloc_addr)=info->base_addr+relocations[i].r_addend;
     }
-    (*init)();
   }
+  //(*init)();
   return info;
 }
 void * get_function(link_info* info,char *func_name)
