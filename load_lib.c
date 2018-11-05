@@ -260,8 +260,21 @@ link_info* map_library(char* lib_name)
   int num_relocations;
   fseek(fd,dynamic,SEEK_SET);
   data_read=fread(dyn_entries,sizeof(Elf64_Dyn),num_dyn_ent,fd);
+  void (*init)();
+
+  Elf64_Addr dyn_sym_offset;
+  int sym_tabsize;
+  int dyn_sym_num;
   for(int i=0;i<num_dyn_ent;i++)
   {
+    if(dyn_entries[i].d_tag==6)
+    {
+      dyn_sym_offset=dyn_entries[i].d_un.d_ptr;
+    }
+    if(dyn_entries[i].d_tag==11)
+    {
+      sym_tabsize=dyn_entries[i].d_un.d_val;
+    }
     if(dyn_entries[i].d_tag==7)
     {
       relocation_addr=dyn_entries[i].d_un.d_ptr;
@@ -270,28 +283,35 @@ link_info* map_library(char* lib_name)
     {
       num_relocations=dyn_entries[i].d_un.d_val/sizeof(Elf64_Rela);
     }
+    if(dyn_entries[i].d_tag==12)
+    {
+      init = info->base_addr+dyn_entries[i].d_un.d_ptr;
+    }
   }
-
-  Elf_Symtab_ent symbols[info->num_sym_entry];
-  fseek(info->file_d,info->symbol_table,SEEK_SET);
+  dyn_sym_num=sym_tabsize/sizeof(Elf_Symtab_ent);
+  Elf_Symtab_ent symbols[dyn_sym_num];
+  fseek(info->file_d,dyn_sym_offset,SEEK_SET);
   int data_red=fread(symbols,sizeof(Elf_Symtab_ent),info->num_sym_entry,info->file_d);
 
   Elf64_Rela relocations[num_relocations];
-  fseek(fd,relocation_addr,fd);
+  fseek(fd,relocation_addr,SEEK_SET);
   fread(relocations,sizeof(Elf64_Rela),num_relocations,fd);
   for(int i=0;i<num_relocations;i++)
   {
     int sym_index=ELF64_R_SYM(relocations[i].r_info);
     int type=ELF64_R_TYPE(relocations[i].r_info);
+    //printf("%d %d\n",sym_index,type);
     Elf64_Addr* reloc_addr=info->base_addr+relocations[i].r_offset;
     if(type==6)
     {
-      *(reloc_addr)=info->base_addr+symbols[sym_index].st_value;
+      *(reloc_addr)=symbols[sym_index].st_value;
+      //printf("%p     %d      %p\n",symbols[sym_index].st_value,sym_index,relocations[i].r_offset);
     }
     if(type==8)
     {
       *(reloc_addr)=info->base_addr+relocations[i].r_addend;
     }
+    (*init)();
   }
   return info;
 }

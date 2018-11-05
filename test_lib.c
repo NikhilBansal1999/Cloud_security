@@ -2,7 +2,7 @@
 int a=0,b=1,n=2;
 int fibonacci(int num)
 {
-
+    //int a=0,b=1,n=2;
     if(num<=0)
     {
       return -1;
