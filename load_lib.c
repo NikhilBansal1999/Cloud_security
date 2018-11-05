@@ -106,6 +106,17 @@ typedef struct
   int prot;
 } command;
 
+typedef struct
+{
+        Elf64_Addr      r_offset;
+        Elf64_Xword     r_info;
+        Elf64_Sxword    r_addend;
+} Elf64_Rela;
+
+#define ELF64_R_SYM(info)             ((info)>>32)
+#define ELF64_R_TYPE(info)            ((Elf64_Word)(info))
+#define ELF64_R_INFO(sym, type)       (((Elf64_Xword)(sym)<<32)+(Elf64_Xword)(type))
+
 long align_down(long addr, long size)
 {
   long ans=addr-(addr%size);
@@ -224,6 +235,9 @@ link_info* map_library(char* lib_name)
   Elf_Section_header section[header->e_shnum];
   fseek(fd,header->e_shoff,SEEK_SET);
   data_read=fread(section,sizeof(Elf_Section_header),header->e_shnum,fd);
+
+  Elf64_Addr dynamic;
+  int num_dyn_ent;
   for(int i=0;i < header->e_shnum ;i++)
   {
     if(section[i].sh_type==2)   /*Symbol Table entry*/
@@ -234,6 +248,49 @@ link_info* map_library(char* lib_name)
     if(section[i].sh_type==3)   /*String Table entry*/
     {
       info->string_table = section[i].sh_offset;
+    }
+    if(section[i].sh_type==6)  /* DYNAMIC Section */
+    {
+      dynamic=section[i].sh_offset;
+      num_dyn_ent=section[i].sh_size/section[i].sh_entsize;
+    }
+  }
+  Elf64_Dyn dyn_entries[num_dyn_ent];
+  Elf64_Addr relocation_addr;
+  int num_relocations;
+  fseek(fd,dynamic,SEEK_SET);
+  data_read=fread(dyn_entries,sizeof(Elf64_Dyn),num_dyn_ent,fd);
+  for(int i=0;i<num_dyn_ent;i++)
+  {
+    if(dyn_entries[i].d_tag==7)
+    {
+      relocation_addr=dyn_entries[i].d_un.d_ptr;
+    }
+    if(dyn_entries[i].d_tag==8)
+    {
+      num_relocations=dyn_entries[i].d_un.d_val/sizeof(Elf64_Rela);
+    }
+  }
+
+  Elf_Symtab_ent symbols[info->num_sym_entry];
+  fseek(info->file_d,info->symbol_table,SEEK_SET);
+  int data_red=fread(symbols,sizeof(Elf_Symtab_ent),info->num_sym_entry,info->file_d);
+
+  Elf64_Rela relocations[num_relocations];
+  fseek(fd,relocation_addr,fd);
+  fread(relocations,sizeof(Elf64_Rela),num_relocations,fd);
+  for(int i=0;i<num_relocations;i++)
+  {
+    int sym_index=ELF64_R_SYM(relocations[i].r_info);
+    int type=ELF64_R_TYPE(relocations[i].r_info);
+    Elf64_Addr* reloc_addr=info->base_addr+relocations[i].r_offset;
+    if(type==6)
+    {
+      *(reloc_addr)=info->base_addr+symbols[sym_index].st_value;
+    }
+    if(type==8)
+    {
+      *(reloc_addr)=info->base_addr+relocations[i].r_addend;
     }
   }
   return info;
