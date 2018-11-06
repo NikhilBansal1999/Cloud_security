@@ -265,29 +265,41 @@ link_info* map_library(char* lib_name)
   Elf64_Addr dyn_sym_offset;
   int sym_tabsize;
   int dyn_sym_num;
+  int plt_ents;
+  Elf64_Addr plt_offset;
   for(int i=0;i<num_dyn_ent;i++)
   {
-    if(dyn_entries[i].d_tag==6)
+    if(dyn_entries[i].d_tag==6) /*Symbol Table*/
     {
       dyn_sym_offset=dyn_entries[i].d_un.d_ptr;
     }
-    if(dyn_entries[i].d_tag==11)
+    if(dyn_entries[i].d_tag==11) /*Size of symbol table*/
     {
       sym_tabsize=dyn_entries[i].d_un.d_val;
     }
-    if(dyn_entries[i].d_tag==7)
+    if(dyn_entries[i].d_tag==7) /* DT_RELA*/
     {
       relocation_addr=dyn_entries[i].d_un.d_ptr;
     }
-    if(dyn_entries[i].d_tag==8)
+    if(dyn_entries[i].d_tag==8) /*DT_RELASZ*/
     {
       num_relocations=dyn_entries[i].d_un.d_val/sizeof(Elf64_Rela);
     }
-    if(dyn_entries[i].d_tag==12)
+    if(dyn_entries[i].d_tag==12)  /*DT_INIT*/
     {
       init = info->base_addr+dyn_entries[i].d_un.d_ptr;
     }
+    if(dyn_entries[i].d_tag==2)  /*Size of relocation entries associated with PLT*/
+    {
+      plt_ents=dyn_entries[i].d_un.d_val;
+    }
+    if(dyn_entries[i].d_tag==23) /*DT_JMPREL*/
+    {
+      plt_offset=dyn_entries[i].d_un.d_ptr;
+    }
   }
+  plt_ents=plt_ents/sizeof(Elf64_Rela);
+
   dyn_sym_num=sym_tabsize/sizeof(Elf_Symtab_ent);
   Elf_Symtab_ent symbols[dyn_sym_num];
   fseek(info->file_d,dyn_sym_offset,SEEK_SET);
@@ -310,6 +322,19 @@ link_info* map_library(char* lib_name)
     if(type==8)
     {
       *(reloc_addr)=info->base_addr+relocations[i].r_addend;
+    }
+  }
+  Elf64_Rela plt_relocations[plt_ents];
+  fseek(fd,plt_offset,SEEK_SET);
+  data_read=fread(plt_relocations,sizeof(Elf64_Rela),plt_ents,fd);
+  for(int i=0;i<plt_ents;i++)
+  {
+    int sym_index=ELF64_R_SYM(plt_relocations[i].r_info);
+    int type=ELF64_R_TYPE(plt_relocations[i].r_info);
+    Elf64_Addr* reloc_addr=info->base_addr+plt_relocations[i].r_offset;
+    if(type==7)
+    {
+      *(reloc_addr)=info->base_addr+symbols[sym_index].st_value;
     }
   }
   //(*init)();
