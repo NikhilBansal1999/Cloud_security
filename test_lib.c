@@ -1,5 +1,15 @@
 #include <stdio.h>
 int a=0,b=1,n=2;
+int loop(int num)
+{
+  while(n<num)
+  {
+    n++;
+    b=b+a;
+    a=b-a;
+  }
+}
+
 int fibonacci(int num)
 {
     //int a=0,b=1,n=2;
@@ -17,12 +27,7 @@ int fibonacci(int num)
     }
     else
     {
-      while(n<num)
-      {
-        n++;
-        b=b+a;
-        a=b-a;
-      }
+      loop(num);
       return b;
     }
 }
