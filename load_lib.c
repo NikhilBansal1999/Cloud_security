@@ -3,9 +3,10 @@
 #include<stdlib.h>
 #include<string.h>
 #include<unistd.h>
-#include <fcntl.h>
+#include<fcntl.h>
 #include<sys/mman.h>
 #include<errno.h>
+#include<assert.h>
 
 typedef uint16_t Elf64_Half;
 typedef uint32_t Elf64_Word;
@@ -31,6 +32,7 @@ typedef struct
   Elf64_Addr end_of_mapping;
   Elf64_Addr base_addr;
   Elf64_Addr string_table;
+  Elf64_Xword string_table_size;
   Elf64_Addr symbol_table;
   int num_sym_entry;
 } link_info;
@@ -207,6 +209,7 @@ link_info* map_library(char* lib_name)
   /*Start mapping of library*/
   int fd_new=open(lib_name, O_RDONLY | O_NOCTTY); //using fopen gave errors
   long length_of_mapping=commands[num_commands-1].allocend-commands[0].mapstart;
+  printf("length_of_mapping: %lu\n", length_of_mapping);
   info->start_of_mapping=(Elf64_Addr)mmap(NULL,length_of_mapping,commands[0].prot,MAP_PRIVATE|MAP_FILE,fd_new,commands[0].mapoff);
   info->end_of_mapping=info->start_of_mapping+length_of_mapping;
   info->base_addr=info->start_of_mapping-commands[0].mapstart;
@@ -248,6 +251,8 @@ link_info* map_library(char* lib_name)
     if(section[i].sh_type==3)   /*String Table entry*/
     {
       info->string_table = section[i].sh_offset;
+      info->string_table_size = section[i].sh_size;
+      printf("offset:%lx; size:%lx\n", info->string_table, info->string_table_size);
     }
     if(section[i].sh_type==6)  /* DYNAMIC Section */
     {
@@ -262,27 +267,50 @@ link_info* map_library(char* lib_name)
   data_read=fread(dyn_entries,sizeof(Elf64_Dyn),num_dyn_ent,fd);
   void (*init)();
 
+  char* string_table = malloc(info->string_table_size);
+  assert (string_table != NULL);
+  fseek(fd,info->string_table,SEEK_SET);
+  data_read=fread(string_table,1,info->string_table_size,fd);
+  assert(data_read == info->string_table_size);
+  char* p = string_table;
+  printf("string_table_pos:%lx; string_table_size:%lu; len:%lu\n", 
+            info->string_table, data_read, strlen(p));
+  int i = 0;
+  for(char *p = string_table; strlen(p) > 0; p = p + strlen(p), i++) {
+      printf("%d: %s\n", i, p);
+  }
+
+  // spramod: dumping dynamic entries
+  for(int i=0;i<num_dyn_ent;i++) {
+      printf("tag[%lld]: %lld\n", i, dyn_entries[i].d_tag);
+  }
+
   Elf64_Addr dyn_sym_offset;
   int sym_tabsize;
   int dyn_sym_num;
   for(int i=0;i<num_dyn_ent;i++)
   {
+    // DT_SYMTAB
     if(dyn_entries[i].d_tag==6)
     {
       dyn_sym_offset=dyn_entries[i].d_un.d_ptr;
     }
+    // DT_SYMENT
     if(dyn_entries[i].d_tag==11)
     {
       sym_tabsize=dyn_entries[i].d_un.d_val;
     }
+    // DT_RELA
     if(dyn_entries[i].d_tag==7)
     {
       relocation_addr=dyn_entries[i].d_un.d_ptr;
     }
+    // DT_RELASZ
     if(dyn_entries[i].d_tag==8)
     {
       num_relocations=dyn_entries[i].d_un.d_val/sizeof(Elf64_Rela);
     }
+    // DT_INIT
     if(dyn_entries[i].d_tag==12)
     {
       init = info->base_addr+dyn_entries[i].d_un.d_ptr;
@@ -300,18 +328,16 @@ link_info* map_library(char* lib_name)
   {
     int sym_index=ELF64_R_SYM(relocations[i].r_info);
     int type=ELF64_R_TYPE(relocations[i].r_info);
-    //printf("%d %d\n",sym_index,type);
+    printf("sym_index:%d; type:%d\n",sym_index, type);
     Elf64_Addr* reloc_addr=info->base_addr+relocations[i].r_offset;
-    if(type==6)
-    {
+    printf("reloc_addr:%p; type:%d\n", reloc_addr, type);
+    if(type==6) {
       *(reloc_addr)=info->base_addr+symbols[sym_index].st_value;
-      //printf("%p     %d      %p\n",symbols[sym_index].st_value,sym_index,relocations[i].r_offset);
-    }
-    if(type==8)
-    {
+    } else if(type==8) {
       *(reloc_addr)=info->base_addr+relocations[i].r_addend;
     }
   }
+  free(string_table);
   //(*init)();
   return info;
 }
