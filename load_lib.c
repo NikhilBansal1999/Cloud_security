@@ -312,12 +312,10 @@ link_info* map_library(char* lib_name)
   {
     int sym_index=ELF64_R_SYM(relocations[i].r_info);
     int type=ELF64_R_TYPE(relocations[i].r_info);
-    //printf("%d %d\n",sym_index,type);
     Elf64_Addr* reloc_addr=info->base_addr+relocations[i].r_offset;
     if(type==6)
     {
-      *(reloc_addr)=info->base_addr+symbols[sym_index].st_value;
-      //printf("%p     %d      %p\n",symbols[sym_index].st_value,sym_index,relocations[i].r_offset);
+      *(reloc_addr)=symbols[sym_index].st_value;
     }
     if(type==8)
     {
@@ -334,10 +332,35 @@ link_info* map_library(char* lib_name)
     Elf64_Addr* reloc_addr=info->base_addr+plt_relocations[i].r_offset;
     if(type==7)
     {
+      *(reloc_addr)=symbols[sym_index].st_value;
+    }
+  }
+  (*init)();
+
+  for(int i=0;i<num_relocations;i++)
+  {
+    int sym_index=ELF64_R_SYM(relocations[i].r_info);
+    int type=ELF64_R_TYPE(relocations[i].r_info);
+    Elf64_Addr* reloc_addr=info->base_addr+relocations[i].r_offset;
+    if(type==6)
+    {
+      *(reloc_addr)=info->base_addr+symbols[sym_index].st_value;
+    }
+    if(type==8)
+    {
+      *(reloc_addr)=info->base_addr+relocations[i].r_addend;
+    }
+  }
+  for(int i=0;i<plt_ents;i++)
+  {
+    int sym_index=ELF64_R_SYM(plt_relocations[i].r_info);
+    int type=ELF64_R_TYPE(plt_relocations[i].r_info);
+    Elf64_Addr* reloc_addr=info->base_addr+plt_relocations[i].r_offset;
+    if(type==7)
+    {
       *(reloc_addr)=info->base_addr+symbols[sym_index].st_value;
     }
   }
-  //(*init)();
   return info;
 }
 void * get_function(link_info* info,char *func_name)
@@ -358,11 +381,11 @@ void * get_function(link_info* info,char *func_name)
     }
   }
 }
-int main()
+int main(int argc, char* argv[])
 {
   link_info* handle=map_library("./lib_test.so");
   int (*fibo)(int);
   fibo = (int (*)(int))get_function(handle, "fibonacci");
-  printf("%d\n",(*fibo)(10));
+  printf("%d\n",(*fibo)(atoi(argv[1])));
   return 0;
 }
