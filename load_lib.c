@@ -34,6 +34,10 @@ typedef uint64_t Elf64_Off;
 #define DT_INIT 12
 #define DT_JMPREL 23
 
+#define R_X86_64_GLOB_DAT 6
+#define R_X86_64_JUMP_SLOT 7
+#define R_X86_64_RELATIVE 8
+
 typedef struct
 {
   FILE* file_d;          /*File descriptor of open library*/
@@ -426,11 +430,11 @@ link_info* map_library(char* lib_name)
     int sym_index=ELF64_R_SYM(relocations[i].r_info);
     int type=ELF64_R_TYPE(relocations[i].r_info);
     Elf64_Addr* reloc_addr=info->base_addr+relocations[i].r_offset;
-    if(type==6)
+    if(type==R_X86_64_GLOB_DAT)
     {
       *(reloc_addr)=info->base_addr+symbols[sym_index].st_value;
     }
-    if(type==8)
+    if(type==R_X86_64_RELATIVE)
     {
       *(reloc_addr)=info->base_addr+relocations[i].r_addend;
     }
@@ -440,7 +444,7 @@ link_info* map_library(char* lib_name)
     int sym_index=ELF64_R_SYM(plt_relocations[i].r_info);
     int type=ELF64_R_TYPE(plt_relocations[i].r_info);
     Elf64_Addr* reloc_addr=info->base_addr+plt_relocations[i].r_offset;
-    if(type==7)
+    if(type==R_X86_64_JUMP_SLOT)
     {
       *(reloc_addr)=info->base_addr+symbols[sym_index].st_value;
     }
@@ -478,6 +482,7 @@ int main(int argc, char* argv[])
   if(handle == NULL)
   {
     printf("Error opening library\n");
+    return 1;
   }
   int (*fibo)(int);
   fibo = (int (*)(int))get_function(handle, "fibonacci");
