@@ -186,7 +186,8 @@ link_info* map_library(char* lib_name)
   }
   info->entry=header->e_entry;
   info->phnum=header->e_phnum;
-  Elf64_Program_header prog_heads[header->e_phnum];
+  //Elf64_Program_header prog_heads[header->e_phnum];
+  Elf64_Program_header* prog_heads=(Elf64_Program_header*)malloc(sizeof(Elf64_Program_header)*header->e_phnum);
   if(fseek(fd,header->e_phoff,SEEK_SET) == -1)
   {
     printf("Error parsing file\n");
@@ -199,7 +200,8 @@ link_info* map_library(char* lib_name)
     return NULL;
   }
 
-  command commands[info->phnum];
+  //command commands[info->phnum];
+  command* commands=(command*)malloc(sizeof(command)*info->phnum);
   int num_commands=0;
   int gap=0;
   for(int i=0;i<header->e_phnum;i++)
@@ -327,7 +329,8 @@ link_info* map_library(char* lib_name)
   {
     info->pht_vaddr = info->pht_vaddr + info->base_addr;
   }
-  Elf_Section_header section[header->e_shnum];
+  //Elf_Section_header section[header->e_shnum];
+  Elf_Section_header* section=(Elf_Section_header*)malloc(sizeof(Elf_Section_header)*header->e_shnum);
   if(fseek(fd,header->e_shoff,SEEK_SET) == -1)
   {
     printf("Parsing Library failed\n");
@@ -380,7 +383,8 @@ link_info* map_library(char* lib_name)
       dyn_sym_num=section[i].sh_size/section[i].sh_entsize;
     }
   }
-  Elf64_Dyn dyn_entries[num_dyn_ent];
+  //Elf64_Dyn dyn_entries[num_dyn_ent];
+  Elf64_Dyn* dyn_entries=(Elf64_Dyn*)malloc(sizeof(Elf64_Dyn)*num_dyn_ent);
   int num_relocations;
   if(fseek(fd,dynamic,SEEK_SET) == -1)
   {
@@ -436,7 +440,10 @@ link_info* map_library(char* lib_name)
       if(section[i].sh_addr==relocation_addr)
       {
         relocation_addr=section[i].sh_offset;
-        break;
+      }
+      if(section[i].sh_addr==plt_offset)
+      {
+        plt_offset=section[i].sh_offset;
       }
     }
   }
@@ -455,7 +462,8 @@ link_info* map_library(char* lib_name)
     return NULL;
   }
 
-  Elf64_Rela relocations[num_relocations];
+  //Elf64_Rela relocations[num_relocations];
+  Elf64_Rela* relocations=(Elf64_Rela*)malloc(sizeof(Elf64_Rela)*num_relocations);
   if(fseek(fd,relocation_addr,SEEK_SET) == -1)
   {
     printf("Parsing Library file failed\n");
@@ -481,7 +489,8 @@ link_info* map_library(char* lib_name)
       *(reloc_addr)=info->base_addr+relocations[i].r_addend;
     }
   }
-  Elf64_Rela plt_relocations[plt_ents];
+  //Elf64_Rela plt_relocations[plt_ents];
+  Elf64_Rela* plt_relocations=(Elf64_Rela*)malloc(sizeof(Elf64_Rela)*plt_ents);
   fseek(fd,plt_offset,SEEK_SET);
   data_read=fread(plt_relocations,sizeof(Elf64_Rela),plt_ents,fd);
   for(int i=0;i<plt_ents;i++)
@@ -494,8 +503,12 @@ link_info* map_library(char* lib_name)
       *(reloc_addr)=symbols[sym_index].st_value;
     }
   }
+  printf("Address: %lx\n",init);
+  printf("Start: %lx\n",info->start_of_mapping);
+  //sleep(1800);
+  getchar();
   (*init)();
-
+  printf("Hello\n");
   for(int i=0;i<num_relocations;i++)
   {
     int sym_index=ELF64_R_SYM(relocations[i].r_info);
@@ -520,6 +533,28 @@ link_info* map_library(char* lib_name)
       *(reloc_addr)=info->base_addr+symbols[sym_index].st_value;
     }
   }
+  //set correct memory protections
+  /*err_val=mprotect((void*)(info->start_of_mapping),commands[0].size,commands[0].prot);
+  if(err_val == -1)
+  {
+    printf("Setting memory protections failed\n");
+    return NULL;
+  }
+  err_val=mprotect((void *)(commands[0].mapend+info->base_addr),commands[num_commands-1].allocend-commands[0].mapend,PROT_NONE);
+  if(err_val == -1)
+  {
+    printf("Setting memory protections failed\n");
+    return NULL;
+  }
+  for(int i=1;i<num_commands;i++)
+  {
+    err_val=mprotect((void*)(info->base_addr+commands[i].mapstart),commands[i].size,commands[i].prot);
+    if(err_val == -1)
+    {
+      printf("Setting memory protections failed\n");
+      return NULL;
+    }
+  }*/
   return info;
 }
 
@@ -551,6 +586,7 @@ int main(int argc, char* argv[])
   }
   else
   {
+    printf("Mapped\n");
     int (*fibo)(int);
     fibo = (int (*)(int))get_function(handle, "fibonacci");
     if(fibo == NULL)

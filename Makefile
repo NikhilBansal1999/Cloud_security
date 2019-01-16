@@ -1,4 +1,4 @@
-all: lib_test.so read_so load_lib load_lib_v2
+all: lib_test.so read_so load_lib load_lib_v2 load_lib_nacl
 
 lib_test.so: test_lib.c
 	gcc -shared -fPIC -o lib_test.so test_lib.c
@@ -12,7 +12,10 @@ load_lib: load_lib.c
 load_lib_v2: load_lib_v2.c
 	gcc -o load_lib_v2 load_lib_v2.c
 
+load_lib_nacl: load_lib_nacl.c
+	gcc -o load_lib_nacl load_lib_nacl.c
+
 .PHONY: clean
 
 clean:
-	rm -f lib_test.so read_so load_lib load_lib_v2
+	rm -f lib_test.so read_so load_lib load_lib_v2 load_lib_nacl
